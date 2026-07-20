@@ -98,10 +98,13 @@ when training and inference features can drift apart.
 
 ## Tech stack
 
-Python · pandas / NumPy · XGBoost · scikit-learn (isotonic calibration) · GitHub Actions
-(scheduling + CI) · live odds & sports-data APIs · git-tracked CSV logs as the system of
-record for paper trading (deliberately simple — no database needed at this scale, and CSVs
-keep every decision auditable in plain text).
+| Category | Tools |
+|---|---|
+| Language & core libraries | Python, pandas, NumPy |
+| Modeling | XGBoost (classifier), scikit-learn (isotonic calibration) |
+| Data sources | Historical match archives, two independent live odds APIs (w/ fallback), live rankings/weather/tournament-context feeds |
+| Automation & deployment | GitHub Actions — scheduled live pipeline (3x/day) + CI |
+| Storage / system of record | Git-tracked CSV logs — no database at this scale; every decision stays auditable in plain text |
 
 ## What I'd walk through live
 
