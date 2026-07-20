@@ -28,8 +28,8 @@ something the market hasn't already priced in.
 | Model | XGBoost + isotonic calibration | binary classifier, walk-forward validated |
 | Out-of-sample AUC | **0.7275** | vs. 0.50 random; vs. ~0.73 in the strongest peer-reviewed benchmark I could find for this exact task; vs. ~0.748 for the closing-line market itself |
 | Validation methodology | Walk-forward (train 2015–2024, tune/holdout 2025–2026) | avoids the lookahead leakage that inflates most public tennis-model claims |
-| Live paper trading | 34 settled bets, in progress | pre-registered a 50-bet minimum sample before drawing any conclusion — **not yet reached**, numbers below are directional, not a track record |
-| Realized vs. model-expected hit rate | 73.5% realized vs. 62.6% calibrated-expected | running ~11pts hot relative to the model's own probabilities — read as small-sample variance, not proof of extra edge, until the pre-registered sample size is reached |
+| Live paper trading | 35 settled bets, in progress | pre-registered a 50-bet minimum sample before drawing any conclusion — **not yet reached**, numbers below are directional, not a track record |
+| Realized vs. model-expected hit rate | 71.4% realized vs. 62.2% calibrated-expected | running ~9pts hot relative to the model's own probabilities — read as small-sample variance, not proof of extra edge, until the pre-registered sample size is reached |
 
 The AUC gap to the market's own closing-line accuracy (0.7275 vs. ~0.748) is the honest
 headline number: it means the model is competitive with, but has not beaten, a market that
