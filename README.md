@@ -26,12 +26,12 @@ something the market hasn't already priced in.
 | Metric | Value | Context |
 |---|---|---|
 | Model | XGBoost + isotonic calibration | binary classifier, walk-forward validated |
-| Out-of-sample AUC | **0.7275** | vs. 0.50 random; vs. 0.7305 for the best result (ELO-ML hybrid) in the largest peer-reviewed benchmark I found — 133,138 ATP matches, 1968–2024, MDPI; vs. ~0.748 for the closing-line market itself |
+| Out-of-sample AUC | **0.7284** | vs. 0.50 random; vs. 0.7305 for the best result (ELO-ML hybrid) in the largest peer-reviewed benchmark I found — 133,138 ATP matches, 1968–2024, MDPI; vs. ~0.748 for the closing-line market itself |
 | Validation methodology | Walk-forward (train 2015–2024, tune/holdout 2025–2026) | avoids the lookahead leakage that inflates most public tennis-model claims |
-| Live paper trading | 35 settled bets, in progress | pre-registered a 50-bet minimum sample before drawing any conclusion — **not yet reached**, numbers below are directional, not a track record |
-| Realized vs. model-expected hit rate | 71.4% realized vs. 62.2% calibrated-expected | running ~9pts hot relative to the model's own probabilities — read as small-sample variance, not proof of extra edge, until the pre-registered sample size is reached |
+| Live paper trading | 46 settled bets, in progress | pre-registered a 50-bet minimum sample before drawing any conclusion — **not yet reached**, numbers below are directional, not a track record |
+| Realized vs. model-expected hit rate | 71.7% realized vs. 61.5% calibrated-expected | running ~10pts hot relative to the model's own probabilities — read as small-sample variance, not proof of extra edge, until the pre-registered sample size is reached |
 
-The AUC gap to the market's own closing-line accuracy (0.7275 vs. ~0.748) is the honest
+The AUC gap to the market's own closing-line accuracy (0.7284 vs. ~0.748) is the honest
 headline number: it means the model is competitive with, but has not beaten, a market that
 prices in insider information (injuries, motivation, weather-day conditioning) the model
 doesn't see. Closing the rest of that gap — or finding the specific situations where the model
@@ -45,7 +45,7 @@ flowchart TD
     B[Live odds feeds<br/>2 independent sources w/ fallback] --> E[Live pipeline]
     C[Live context: rankings, weather,<br/>tournament fatigue, injury signals] --> E
 
-    D --> F[Custom Elo rating engine<br/>surface + serve/return variants]
+    D --> F[Elo + Glicko-2 rating engines<br/>run in parallel: surface + serve/return<br/>variants, each feeding its own features]
     F --> D
     D --> G[XGBoost classifier]
     G --> H[Isotonic calibration]
@@ -69,13 +69,18 @@ when training and inference features can drift apart.
 
 ## Engineering highlights
 
+- **Two independent rating systems as parallel feature inputs**, not a single point-estimate
+  rating. Elo and Glicko-2 (which additionally tracks rating uncertainty and volatility, not
+  just a single number) are both computed across the same surface/serve/return splits and fed
+  into the classifier side by side — diversity of signal rather than betting the whole system
+  on one rating mechanic's assumptions.
 - **Anti-leakage validation discipline.** Walk-forward tune/holdout split by year, not random
   k-fold — a random split would let the model "see the future" of a player's form. A
   lookahead-leakage bug was found and fixed mid-project by re-deriving every feature's
   computation window and confirming strict past-only dependence.
 - **Pre-registered validation threshold.** A 50-settled-bet minimum was set *before* paper
   trading began, specifically to avoid the temptation to declare success on an early lucky
-  streak. Current sample (34 bets) is reported with that caveat front and center rather than
+  streak. Current sample (46 bets) is reported with that caveat front and center rather than
   omitted.
 - **Automated live deployment.** Runs unattended 3x/day via GitHub Actions: fetch live odds
   and match state → resolve player identities across data sources → build features → predict
